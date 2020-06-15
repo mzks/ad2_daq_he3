@@ -16,7 +16,10 @@ Analog Discovery 2はUSBでraspberry pi4に接続し, 通信, 給電をおこな
 
 試験に用いたソフトウェアは `/home/pi/ad2` 以下を参照されたい. 特に`daq/daq.py` がAnalog Discovery 2と通信し波形取得するスクリプトである. その他のスクリプトについては後述する.
 
+## Prerequirement
 
+  - Adept 2 runtime
+  - WaveForms
 
 ## `daq.py`
 
