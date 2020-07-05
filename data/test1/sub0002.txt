@@ -1,1 +1,0 @@
-Dir name    : /home/pi/ad2/data/test1/File name   : sub0002N events    : 100Trigger (V) : c_double(0.1)PositiveSampling Hz : c_double(10000000.0)time pos.(s): c_double(0.0)
