@@ -1,8 +1,9 @@
-# DAQ for He-3 Counter with Analog Discovery 2 and Raspberry Pi(Ver. 2. 0)
+# DAQ for He-3 Counter with Analog Discovery 2 and Raspberry Pi
 
 Author Keita Mizukoshi (Kobe Univ.)
 
  Jul. 5 2020
+ Ver. 2.0
 
 
 ### Ver. 1からの修正点
