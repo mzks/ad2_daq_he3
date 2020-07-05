@@ -10,22 +10,25 @@ import time
 def run():
 
     ## Edit HERE ##
-    data_dir = '/home/pi/ad2/data/' # with the last slash
+
+    data_dir = '/home/pi/ad2_daq/data/' # with the last slash
     sub_dir = '20200705'
-    entries = 10000
+    entries = 10000  # per 1 subrun
 
     frequency = 10000000.0 # Hz For PMT test
     #frequency = 20000.0 # Hz For He-3
     trigger_level = -1.0 # V
-    trigger_type = 'rise' # rise or fall
+    trigger_type = 'rise' # 'rise' or 'fall'
     trigger_position = 3.e-4 # s
 
+    daq_cmd = '/home/pi/ad2_daq/bin/daq'
+    copy_script = '/home/pi/ad2_daq/bin/autocopy.sh'
 
-    daq_cmd = '/home/pi/ad2/bin/daq'
+    ###############
+
+
     subrun_name = find_newrun(data_dir+sub_dir+'/')
-
-
-    print_cmd(['Manual copy:','/home/pi/ad2/bin/autocopy.sh',
+    print_cmd(['Manual copy:',copy_script,
         data_dir+sub_dir])
 
     cmd = [daq_cmd
@@ -43,8 +46,8 @@ def run():
     subprocess.run(cmd)
 
     # Copy cmd
-    print_cmd(['/Users/mzks/drs4/run_scripts/autocopy.sh',sub_dir])
-    #subprocess.Popen(['/Users/mzks/drs4/run_scripts/autocopy.sh',sub_dir])
+    print_cmd([copy_script, sub_dir])
+    subprocess.Popen([copy_script, sub_dir])
 
 
 def print_cmd(cmd):
