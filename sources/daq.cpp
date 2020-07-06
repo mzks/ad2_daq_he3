@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <string.h>
+#include <math.h>
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -24,6 +25,8 @@ int main(int carg, char **szarg){
     const double TRIG_POS = std::stod(szarg[4]); // Sec.
     const int ENTRIES = std::stoi(szarg[5]); // Sec.
     const char* FILE_NAME_PREFIX = szarg[6];
+
+    const double EPSILON = 1.e-6;
 
     std::ofstream ofs(std::string(FILE_NAME_PREFIX)+".txt", std::ios::app);
     ofs << "File name prefix       : " << FILE_NAME_PREFIX << std::endl;
@@ -132,8 +135,8 @@ int main(int carg, char **szarg){
         // Error Check
         bool isSamePrevious = true;
         //for(int i = 0; i < cSamples; i++){
-        for(int i = 0; i < 20; i++){
-            if(rgdSamples[i] != previousSamples[i]){
+        for(int i = 0; i < 2000; i++){
+            if(fabs(rgdSamples[i] - previousSamples[i]) > EPSILON){
                 isSamePrevious = false;
                 break;
             }
@@ -141,6 +144,9 @@ int main(int carg, char **szarg){
         if(isSamePrevious){
             printf("Error: New event is the same of the previous one.");
             ofs << "-4 Error: New event is the same of the previous one." << std::endl;
+            ofs.close();
+            fclose(outputfile);
+            FDwfDeviceCloseAll();
             return 0; 
         }
 
@@ -152,7 +158,9 @@ int main(int carg, char **szarg){
 
         // Calc rate
         if(iTrigger % 10 == 0 && iTrigger != 0){
-            ofs << "Rate(Hz) " << iTrigger << " " << sec << " " << 10./double(sec - time_to_calc_rate) << std::endl;
+            double diff = double(sec - time_to_calc_rate)
+            if (diff < EPSILON) diff = 0.01;
+            ofs << "Rate(Hz) " << iTrigger << " " << sec << " " << 10./diff << std::endl;
             time_to_calc_rate = sec;
         }
 
