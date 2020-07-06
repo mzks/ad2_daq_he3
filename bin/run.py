@@ -12,10 +12,10 @@ def run():
     ## Edit HERE ##
 
     data_dir = '/home/pi/ad2_daq/data/' # with the last slash
-    sub_dir = '20200705'
+    sub_dir = '20200706'
     entries = 10000  # per 1 subrun
 
-    frequency = 10000000.0 # Hz For PMT test
+    frequency = 5000000.0 # Hz For PMT test
     #frequency = 20000.0 # Hz For He-3
     trigger_level = -1.0 # V
     trigger_type = 'rise' # 'rise' or 'fall'
@@ -48,7 +48,7 @@ def run():
 
     # Copy cmd
     print_cmd([copy_script, sub_dir])
-    subprocess.Popen([copy_script, sub_dir])
+    #subprocess.Popen([copy_script, sub_dir])
 
 
 def print_cmd(cmd):
