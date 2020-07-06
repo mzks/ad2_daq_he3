@@ -128,9 +128,11 @@ int main(int carg, char **szarg){
         fprintf(outputfile, "#. %d %ld.%ld\n", iTrigger, sec, usec);
 
         FDwfAnalogInStatusData(hdwf, 0, rgdSamples, cSamples);
+
         // Error Check
         bool isSamePrevious = true;
-        for(int i = 0; i < cSamples; i++){
+        //for(int i = 0; i < cSamples; i++){
+        for(int i = 0; i < 20; i++){
             if(rgdSamples[i] != previousSamples[i]){
                 isSamePrevious = false;
                 break;
@@ -138,9 +140,10 @@ int main(int carg, char **szarg){
         }
         if(isSamePrevious){
             printf("Error: New event is the same of the previous one.");
-            ofs << "-4 Error: New event it the same of the previous one." << std::endl;
+            ofs << "-4 Error: New event is the same of the previous one." << std::endl;
             return 0; 
         }
+
         for(int i = 0; i < cSamples; i++){
             fprintf(outputfile,"%lf\n", rgdSamples[i]);
         }

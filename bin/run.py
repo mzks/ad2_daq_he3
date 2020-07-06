@@ -19,7 +19,8 @@ def run():
     #frequency = 20000.0 # Hz For He-3
     trigger_level = -1.0 # V
     trigger_type = 'rise' # 'rise' or 'fall'
-    trigger_position = 3.e-4 # s
+    #trigger_position = 3.e-4 # s
+    trigger_position = 1./frequency*3000.
 
     daq_cmd = '/home/pi/ad2_daq/bin/daq'
     copy_script = '/home/pi/ad2_daq/bin/autocopy.sh'
