@@ -42,7 +42,7 @@ int main(int argc, char** argv){
 	UInt_t timestamp_usec;
 	ULong64_t timestamp_end;
 	UInt_t timestamp_usec_end;
-	Float_t buf1;
+	Short_t buf1;
 	Float_t wf[8192];
 
 	mkdir((root_dir+run_name).Data(), 0777);
@@ -70,14 +70,14 @@ int main(int argc, char** argv){
 
 		for(int ibin=0;ibin<8192;++ibin){
 			ifs >> buf1;
-			wf[ibin] = buf1;
+			wf[ibin] = buf1/65536.;
 		}
 
 		ifs >> buf_ts;
 		std::stringstream ss2(buf_ts);
-		std::getline(ss2, token, '.');
+		std::getline(ss2, token, ' ');
 		timestamp_end = std::stoll(token);
-		std::getline(ss2, token, '.');
+		std::getline(ss2, token, ' ');
 		timestamp_usec_end = std::stoll(token);
 
 		tree->Fill();
