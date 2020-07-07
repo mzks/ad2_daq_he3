@@ -23,10 +23,10 @@ int main(int carg, char **szarg){
     bool TRIG_RISE = false;
     if(szarg[3] == "rise"){ TRIG_RISE = true; }
     const double TRIG_POS = std::stod(szarg[4]); // Sec.
-    const int ENTRIES = std::stoi(szarg[5]); // Sec.
+    const int ENTRIES = std::stoi(szarg[5]); // Number of Entries in one subrun
     const char* FILE_NAME_PREFIX = szarg[6];
-
-    const double EPSILON = 1.e-6;
+    const double CHANNEL_RANGE = 5.;
+    const double CHANNEL_OFFSET = 0.;
 
     std::ofstream ofs(std::string(FILE_NAME_PREFIX)+".txt", std::ios::app);
     ofs << "File name prefix       : " << FILE_NAME_PREFIX << std::endl;
@@ -38,13 +38,20 @@ int main(int carg, char **szarg){
         ofs << "Trigger Type           : " << "Falling Negative" << std::endl;
     }
     ofs << "Trigger Position (s)   : " << TRIG_POS << std::endl;
+    ofs << "Range (V)              : " << CHANNEL_RANGE << std::endl;
+    ofs << "Offset (V)             : " << CHANNEL_OFFSET << std::endl;
     ofs << "Number of Events       : " << ENTRIES << std::endl;
 
     HDWF hdwf;
     STS sts;
     int cSamples = 8192;
-    double *rgdSamples = new double[cSamples];
-    double *previousSamples = new double[cSamples];
+    short *rgdSamples = new short[cSamples];
+    short *previousSamples = new short[cSamples];
+
+    for(int i=0;i<cSamples;++i){
+        rgdSamples[i] = 0;
+        previousSamples[i] = 0;
+    }
     char szError[512] = {0};
     
     printf("Open automatically the first available device\n");
@@ -58,7 +65,10 @@ int main(int carg, char **szarg){
     FDwfAnalogInFrequencySet(hdwf, FREQ);
     FDwfAnalogInBufferSizeSet(hdwf, 8192);
     FDwfAnalogInChannelEnableSet(hdwf, 0, true);
-    FDwfAnalogInChannelRangeSet(hdwf, 0, 5.0);
+    FDwfAnalogInChannelRangeSet(hdwf, 0, CHANNEL_RANGE);
+    FDwfAnalogInChannelOffsetSet(hdwf, 0, CHANNEL_OFFSET);
+
+    
 
     // set up trigger
     // disable auto trigger
@@ -128,15 +138,15 @@ int main(int carg, char **szarg){
 		gettimeofday(&_time, NULL);
 		long sec = _time.tv_sec;
 		long usec = _time.tv_usec;
-        fprintf(outputfile, "#. %d %ld.%ld\n", iTrigger, sec, usec);
+        fprintf(outputfile, "#. %d %ld %ld\n", iTrigger, sec, usec);
 
-        FDwfAnalogInStatusData(hdwf, 0, rgdSamples, cSamples);
+        FDwfAnalogInStatusData16(hdwf, 0, rgdSamples, 0, cSamples);
 
         // Error Check
         bool isSamePrevious = true;
-        //for(int i = 0; i < cSamples; i++){
-        for(int i = 0; i < 2000; i++){
-            if(fabs(rgdSamples[i] - previousSamples[i]) > EPSILON){
+
+        for(int i = 0; i < cSamples; i++){
+            if(rgdSamples[i] != previousSamples[i]){
                 isSamePrevious = false;
                 break;
             }
@@ -151,15 +161,14 @@ int main(int carg, char **szarg){
         }
 
         for(int i = 0; i < cSamples; i++){
-            fprintf(outputfile,"%lf\n", rgdSamples[i]);
+            fprintf(outputfile,"%d\n", rgdSamples[i]);
+            previousSamples[i] = rgdSamples[i];
         }
-
-        memcpy(previousSamples, rgdSamples, cSamples);
 
         // Calc rate
         if(iTrigger % 10 == 0 && iTrigger != 0){
-            double diff = double(sec - time_to_calc_rate)
-            if (diff < EPSILON) diff = 0.01;
+            double diff = double(sec - time_to_calc_rate);
+            if (diff < 0.1) diff = 10./9999.;
             ofs << "Rate(Hz) " << iTrigger << " " << sec << " " << 10./diff << std::endl;
             time_to_calc_rate = sec;
         }
@@ -167,7 +176,7 @@ int main(int carg, char **szarg){
 		gettimeofday(&_time_release, NULL);
 		long sec_release = _time_release.tv_sec;
 		long usec_release = _time_release.tv_usec;
-        fprintf(outputfile, "%ld.%ld\n", sec_release, usec_release);
+        fprintf(outputfile, "%ld %ld\n", sec_release, usec_release);
     }
 
     // terminate
