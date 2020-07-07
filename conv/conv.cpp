@@ -28,12 +28,15 @@ int main(int argc, char** argv){
 	TString run_name = argv[1];
 	TString filename = argv[2];
 
-	TString data_dir = "/home/mzks/ad2/data/";
-	TString root_dir = "/home/mzks/ad2/rootfile/";
+	TString data_dir = "/home/mzks/ad2_daq/data/";
+	TString root_dir = "/home/mzks/ad2_daq/rootfile/";
 	std::cout << data_dir+run_name+"/"+filename+".dat" << std::endl;
 
 	std::ifstream ifs(data_dir+run_name+"/"+filename+".dat");
-	if(!ifs.is_open()) return -1;
+	if(!ifs.is_open()){
+		std::cout << "no such file" << std::endl;
+		return -1;
+	}
 
 	std::string buf;
 	std::string buf_ts;
@@ -59,26 +62,14 @@ int main(int argc, char** argv){
 
 	std::string token;
 
-// #. 0  1593704507.71013
-	while(ifs >> buf >> eventid >> buf_ts){
-
-		std::stringstream ss1(buf_ts);
-		std::getline(ss1, token, '.');
-		timestamp = std::stoll(token);
-		std::getline(ss1, token, '.');
-		timestamp_usec = std::stoll(token);
+	while(ifs >> buf >> eventid >> timestamp >> timestamp_usec){
 
 		for(int ibin=0;ibin<8192;++ibin){
 			ifs >> buf1;
-			wf[ibin] = buf1/65536.;
+			wf[ibin] = buf1*5./65536.;
 		}
 
-		ifs >> buf_ts;
-		std::stringstream ss2(buf_ts);
-		std::getline(ss2, token, ' ');
-		timestamp_end = std::stoll(token);
-		std::getline(ss2, token, ' ');
-		timestamp_usec_end = std::stoll(token);
+		ifs >> timestamp_end >> timestamp_usec_end;
 
 		tree->Fill();
 	}
