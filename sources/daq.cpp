@@ -131,6 +131,9 @@ int main(int carg, char **szarg){
             if(_time_now.tv_sec - _time.tv_sec > 600){
                 printf("Error: No events in this 600 seconds. Quit.");
                 ofs << "-3 Error: No events in this 600 seconds. Quit." << std::endl;
+                ofs.close();
+                fclose(outputfile);
+                FDwfDeviceCloseAll();
                 return 0;
             }
             Wait(0.001);
