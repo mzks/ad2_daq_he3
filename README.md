@@ -3,7 +3,7 @@
 Author Keita Mizukoshi (Kobe Univ.)
 
  Jul. 11 2020
- Ver. 2.1
+ Ver. 2.3
 
 
 ### Ver. 1からの修正点
