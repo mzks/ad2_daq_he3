@@ -21,7 +21,7 @@ int main(int carg, char **szarg){
     const double FREQ = std::stod(szarg[1]); // Hz for PMT
     const double TRIG_LEVEL = std::stod(szarg[2]); // V
     bool TRIG_RISE = false;
-    if(szarg[3] == "rise"){ TRIG_RISE = true; }
+    if(szarg[3][0] == 'r'){ TRIG_RISE = true; }
     const double TRIG_POS = std::stod(szarg[4]); // Sec.
     const int ENTRIES = std::stoi(szarg[5]); // Number of Entries in one subrun
     const char* FILE_NAME_PREFIX = szarg[6];
